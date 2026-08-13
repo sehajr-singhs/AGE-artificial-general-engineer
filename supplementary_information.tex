@@ -1,0 +1,401 @@
+% Supplementary Information for
+% "An artificial general engineer that learns software and physical
+%  engineering through verified trial and error"
+%
+% Compile: pdflatex supplementary_information.tex
+% This file extends the Methods of the main manuscript with implementation
+% details, hyperparameter tables, per-domain verification data, and full
+% training configuration logs.
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[expansion=false]{microtype}
+\usepackage{enumitem}
+
+\setlength{\parskip}{0.4em}
+\linespread{1.12}
+
+\newcommand{\Age}{\textsc{Age}}
+\newcommand{\PhysFormer}{\textsc{PhysFormer}}
+
+\title{Supplementary Information: An artificial general engineer that learns\\
+software and physical engineering through verified trial and error}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{SI 1. Parameter ranges and problem generators}
+
+All datasets are generated deterministically from uniform sampling over the
+ranges below (SI units; angles in degrees). The generator
+(\texttt{physx/dataset.py}) is committed and reproducible: the same seed
+yields bit-identical problems.
+
+\begin{center}
+\small
+\begin{tabular}{lcl}
+\toprule
+Domain & Parameters (range) & Answer \\
+\midrule
+Projectile & $v_0 \in [5,30]$ m/s, $\alpha \in [10^\circ, 80^\circ]$ & range (m) \\
+Pendulum & $L \in [0.5,3]$ m, $\theta_0 \in [5^\circ,60^\circ]$ & period (s) \\
+Spring--mass & $k \in [5,50]$ N/m, $m \in [0.2,5]$ kg, $A \in [0.1,1]$ m & $\omega=\sqrt{k/m}$ (rad/s) \\
+Beam & $L \in [1,6]$ m, $P \in [10^3,5\times10^4]$ N, $E \in [69,210]$ GPa, $I \in [10^{-7},2\times10^{-5}]$ m$^4$, $h \in [0.05,0.4]$ m & $w_{\max}=PL^3/(48EI)$ (m) \\
+Cantilever & same five ranges as beam & $w_{\max}=PL^3/(3EI)$ (m) \\
+Burgers & $\nu \in [0.02,0.1]$, $A \in [0.6,2]$, $\sigma \in [0.2,0.5]$ & peak $u(x, t{=}0.4)$ (m/s) \\
+RC circuit & $R \in [10^3,10^6]$ $\Omega$, $C \in [10^{-6},10^{-3}]$ F, $V_0 \in [1,24]$ V & $\tau = RC$ (s) \\
+Heat2D & $A \in [100,500]$ K, $k,l \in [1,3]$ (integer mode numbers) & peak $T = A$ (K) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Reference trajectories are sampled at $T=50$ points from the closed-form
+solutions on grids fully determined by the parameters (time for the
+dynamical domains, position along the span for the bending domains), so the
+model never predicts a redundant coordinate.
+
+\section*{SI 2. Independent numeric verifiers}
+
+Each closed form is cross-checked by a verifier implemented without
+reference to it, so the agent's verification gate is not a tautology.
+
+\begin{center}
+\small
+\begin{tabular}{llll}
+\toprule
+Domain & Verifier & Grid & Tolerance \\
+\midrule
+Projectile & Euler integration of ballistic ODE & $\Delta t = T/2000$ & $2\times10^{-3}$ \\
+Pendulum & RK4 integration; period by step-halving convergence & $\Delta t = 10^{-4}$ & $10^{-3}$ \\
+Spring--mass & ODE residual $m\ddot x + kx$ by central differences & 400 points & $10^{-3}$ \\
+Beam & FD solution of $EI w'''' = q$ (ghost points at ends) & 400 nodes & $2\times10^{-2}$ \\
+Cantilever & FD double integration of $M(x) = -P(L-x)$ (ghost at clamp) & 400 nodes & $2\times10^{-2}$ \\
+Burgers & finite-volume upwind for $u_t + (u^2/2)_x = \nu u_{xx}$ & 2{,}000 cells & $5\times10^{-2}$ \\
+RC circuit & Euler integration of $\dot V + V/\tau = V_0/\tau$ & 4{,}000 steps & $2\times10^{-3}$ \\
+Heat2D & sparse FD Poisson solve, 5-point stencil, Dirichlet rows & 48$^2$ grid & $2\times10^{-3}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The Burgers domain is the deliberately hard case: a nonlinear conservation
+law whose solutions steepen into shocks as $\nu$ decreases. Its ``closed
+form'' is the Cole--Hopf transform $u = -2\nu\,\phi_x/\phi$ with $\phi$ the
+heat evolution of $\phi_0(x)=\exp(-(1/2\nu)\int_{-\infty}^{x}u_0)$, evaluated
+by direct kernel quadrature on a fine grid (an FFT derivative would ring on
+the non-periodic, many-orders-of-magnitude $\phi_0$). The finite-volume
+verifier is written from the conservation form only and agrees with the
+Cole--Hopf reference to $\sim$1\% on the model grid at 2{,}000 cells. The
+predicted trajectory is the flattened $25\times8$ (x, t) field; the
+physics-consistency layer evaluates the Burgers residual
+$u_t + u u_x - \nu u_{xx}$ pointwise on that true grid, and the scalar answer
+(the peak of the final field) is the shape-norm scale, with the field
+reconstructed as shape $\times$ $A$ at inference (the field peaks at the
+initial amplitude $A$).
+
+The cantilever finite-difference solver deserves note: because the clamped
+end carries two boundary conditions ($w(0)=0$, $w'(0)=0$), the second-order
+moment equation is discretized with a ghost point $w_{-1}=w_1$ folded into
+the ODE at $x=0$ and a free-end ghost $w_n$, so that every interior index
+carries a second-difference stencil. Pinning $w_0$ and $w_1$ as separate
+rows instead leaves a spurious linear null mode (a kinked ramp invisible to
+the interior stencil), which we diagnosed during development and avoided.
+
+\section*{SI 3. PhysFormer architecture}
+
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item \textbf{Input tokens:} one token per parameter, embedding of the
+      parameter id plus a linear projection of the $z$-scored value plus a
+      learned positional embedding (capacity for up to 16 parameters).
+\item \textbf{Reasoning layers:} standard transformer encoder, GELU
+      activation, dropout 0.05, layer norm, batch-first.
+\item \textbf{Answer head:} two linear layers (hidden width = $d_{\text{model}}$),
+      GELU in between; output in $\log_{10}$ space for beam, cantilever, and RC.
+\item \textbf{Trajectory head:} MLP with two hidden layers (width
+      \texttt{traj\_hidden}, 64--128), output $T\times C$ where $T=50$ for the
+      one-dimensional domains, $T=25\times8=200$ for the Burgers field, and
+      $T=20\times20=400$ for the heat plate, and
+      $C=2$ for projectile/pendulum/spring, $C=1$ otherwise.
+\item \textbf{Baselines:} an MLP encoder with the same capacity budget
+      replaces the attention stack (same heads, data-only loss), and a
+      ``no-physics'' transformer disables the residual term; both are trained
+      on identical budgets (see SI 4) so attention and physics are isolated.
+\item \textbf{Physics-consistency layer:} computes the governing-equation
+      residual of the de-scaled predicted trajectory on the true grid
+      (residuals.py); the loss uses its scale-free normalized form
+      $\rho/\rho_{\text{det}}$, ramped in after epoch 10. A per-sample
+      hard-example weighting was implemented and ablated; at this data
+      scale it destabilized training (see SI 4 note) and is not used in
+      the released models.
+\item \textbf{Law-Conditioned Attention (LCA):} the multi-law generalist
+      (\texttt{PhysFormerLCA}) replaces the per-domain parameter embedding
+      with a shared physical-quantity vocabulary (13 tokens: length, force,
+      modulus, inertia, thickness, speed, angle, stiffness, mass, amplitude,
+      resistance, capacitance, voltage), so beam and cantilever present the
+      identical token sequence. Each sample also carries its law signature
+      (Table~S1); an MLP embeds it into a law vector, and every encoder
+      layer cross-attends to it (residual + layer norm). The ablation
+      feeds a constant signature so the conditioning stream exists but
+      carries no equation information. One shared answer head and one
+      shared trajectory head serve all six 50-step laws; trajectories are
+      normalized per channel by their own peak and answers are $z$-scored
+      per domain.
+\end{itemize}
+
+Training: AdamW ($\mathrm{lr}=10^{-3}$, weight decay $10^{-4}$), global
+gradient norm clipping at 1.0, batch size 32, validation = last $1/8$ of
+the generated problems (by generation order). The seed controls data
+generation, batch shuffling, and weight initialization, so multi-seed runs
+are proper statistical replicates; reported errors are mean~$\pm$~std over
+five seeds. All seeds, hyperparameters, datasets, weights, and per-epoch
+metrics are committed.
+
+\section*{SI 4. Training runs referenced in the paper}
+
+\begin{center}
+\small
+\begin{tabular}{llllllll}
+\toprule
+Run & Domain & Epochs & Samples & $d_{\text{model}}$ & Layers & traj\_norm & Seeds \\
+\midrule
+baseline matrix (Table 2) & beam / cantilever / projectile / burgers / heat2d & 60 & 256 & 48 & 3 & per-domain & 5 \\
+abl: physics on/off (Fig. 6) & beam & 40 & 256 & 48 & 3 & shape & 1 \\
+abl: global norm (Fig. 6) & beam & 40 & 256 & 48 & 3 & global & 1 \\
+projectile (early) & projectile & 30 & 1{,}500 & 48 & 3 & global & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Per-epoch metrics for every run are available as training logs in
+\texttt{physx/models/*.log}; the ablation and baseline figures in the main
+text are parsed directly from those logs (\texttt{fig6\_data.json},
+\texttt{fig9\_data.json}). The headline models used for the generalization
+figures are the median-seed runs of the baseline matrix, promoted to
+\texttt{physx/models/<domain>.pt} by \texttt{physx/run\_matrix.py}.
+
+\section*{SI 5. Agent loop and skills}
+
+The agent (Node.js, zero dependencies) executes a plan of skill invocations
+inside a sandboxed working directory. Skills: \texttt{inspect} (file tree),
+\texttt{read} (file contents, capped), \texttt{search} (regex, line
+numbers), \texttt{edit} (create/rewrite/append, path-confined),
+\texttt{run} (shell with 120\,s timeout and denylist), \texttt{verify}
+(gated check), \texttt{physx} (spawns the solver without a shell, JSON via
+argv). Steps annotated \texttt{expect: ok} gate the loop: a failed gated
+step fails the mission and writes a lesson to the episodic journal.
+
+The verification-gate benchmark (Table 3, \texttt{bench/gate\_bench.js})
+runs the same missions twice: with the gate enforced (\texttt{enforceGate:
+true}) and with it disabled (\texttt{false}), in which case gated failures
+are not distinguished from successes and the agent trusts its own claims.
+Ground truth is computed independently of the agent: the test suite is run
+by the benchmark itself, and physics missions are checked against the
+solver's independent numeric verification.
+
+Safety: path containment on every file operation; command denylist
+(\texttt{rm -rf /}, \texttt{git push}, \texttt{git reset --hard},
+privilege escalation, disk formatting, shell-pipe-to-\texttt{sh}) unless
+\texttt{AGE\_ALLOW\_DANGEROUS=1}; python bytecode caches purged before every
+python command so the verification gate always recompiles from source (a
+same-length, same-second edit can otherwise be masked by a stale
+\texttt{.pyc}, which we observed in practice).
+
+\section*{SI 6. Figure data}
+
+The exact numbers used in Figures 3--11 are stored as JSON alongside the
+figure scripts (\texttt{paper/fig/fig*\_data.json}), and every ablation and
+baseline curve is parsed from real training logs, so all quantitative
+claims in the manuscript are traceable to committed artifacts. The
+significance tests are reproduced from the training logs by
+\texttt{physx/significance.py} (output \texttt{paper/fig/significance.json}),
+and the \textsc{DeepXDE} comparison by
+\texttt{physx/deepxde\_baseline.py} (output
+\texttt{paper/fig/deepxde\_comparison.json}). The gate
+benchmark results are in \texttt{bench/gate\_bench\_results.json}.
+
+\section*{SI 7. External PINN baseline (DeepXDE)}
+
+\textsc{DeepXDE} 1.15.0 (PyTorch backend, vendored in \texttt{vendor/})
+was trained per instance on three representative Burgers problems
+(canonical $\nu{=}0.05$, $A{=}1.5$, $\sigma{=}0.3$; mild $\nu{=}0.10$,
+$A{=}0.8$, $\sigma{=}0.45$; shock $\nu{=}0.02$, $A{=}1.8$,
+$\sigma{=}0.25$), one fresh 2--50$\times$4--1 tanh FNN per problem, 2{,}000
+collocation points, Adam 12k steps then L-BFGS 2k steps, exact Cole--Hopf
+boundary data at $x=\pm1$, identical for every instance. Both models are
+evaluated with identical metrics on the model grid: final-time peak error,
+maximum pointwise error over the full $(x,t)$ solution relative to the
+final-time peak, and the same finite-difference governing-equation
+residual that trains PhysFormer's physics layer.
+
+\begin{center}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{2}{c}{Peak error (\%)} & \multicolumn{2}{c}{Field error (\%)} & \multicolumn{2}{c}{Residual} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Instance & DDE & PhysF. & DDE & PhysF. & DDE & PhysF. \\
+\midrule
+Canonical & 0.00 & 0.54 & 0.03 & 32.9 & $3.3\times10^{-3}$ & $2.4\times10^{-4}$ \\
+Mild & 0.01 & 0.02 & 0.06 & 50.5 & $1.3\times10^{-3}$ & $1.7\times10^{-3}$ \\
+Shock & 0.00 & 3.73 & 0.03 & 37.9 & $5.1\times10^{-3}$ & $1.6\times10^{-3}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The per-instance PINN trains $\sim$19--21 minutes per problem; PhysFormer
+is one network trained once on 256 problems ($\sim$1--2 minutes), then a
+millisecond forward pass for any instance. The generalist's residual is
+comparable to or lower than the converged specialist's, i.e. its
+predictions are as physical but less accurate. Full per-instance results
+are in \texttt{paper/fig/deepxde\_comparison.json}, and the predicted
+fields in \texttt{paper/fig/deepxde\_fields/}.
+
+\section*{SI 9. Law-Conditioned Attention: vocabulary, signatures, and the multi-law experiment}
+
+\begin{table}[h]
+\centering
+\small
+\caption{The eight governing equations, tokenized into the fixed 22-operator
+vocabulary. The binary signature is the LCA input for each law.}
+\label{tab:laws}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Domain & Governing equation & Operator signature \\
+\midrule
+Projectile & $y = x\tan\alpha - gx^2/(2v_0^2\cos^2\alpha)$ &
+  algebraic\_closed\_form, gravity\_coupling, quadratic\_in\_space, trig\_of\_param \\
+Pendulum & $\tfrac{1}{2}L^2\omega^2 + gL(1-\cos\theta)=\mathrm{const}$ &
+  energy\_conservation, nonlinear\_trig, gravity\_coupling, angular\_velocity\_squared \\
+Spring & $m\ddot{x} + kx = 0$ &
+  second\_time\_deriv, linear\_restoring, harmonic \\
+Beam & $EI\,w'' = M(x)$, $M=\tfrac{Px}{2}$ $(x\le\tfrac{L}{2})$ &
+  second\_space\_deriv, moment\_curvature, piecewise\_load, linear\_in\_space \\
+Cantilever & $EI\,w'' = P(L-x)$ &
+  second\_space\_deriv, moment\_curvature, linear\_in\_space \\
+RC & $\dot{V} + V/\tau = V_0/\tau$ &
+  first\_time\_deriv, exponential\_relaxation \\
+Burgers & $u_t + uu_x = \nu u_{xx}$ &
+  first\_time\_deriv, first\_space\_deriv, second\_space\_deriv, self\_advection, diffusion \\
+Heat2D & $\nabla^2 u = f(x,y)$ &
+  second\_space\_deriv, laplacian\_2d, separable\_modes, poisson\_source \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The multi-law experiment trains one \texttt{PhysFormerLCA} on six of these
+laws (beam, cantilever, projectile, pendulum, spring, RC --- all 50-step
+geometries) with a single shared answer head and trajectory head. Per
+seed, each law contributes 96 training samples (576 total) at 250 epochs;
+the conditioning condition uses the true signatures, the ablation uses a
+constant signature, everything else identical. Held-out evaluation (last
+1/8 per law, per-seed) reports answer relative error, curve error, and the
+physics residual. Specialists are the single-law models trained at 256
+samples / 60 epochs.
+
+\textbf{Results (six seeds, 36 paired runs).} Curve error: LCA $0.093$
+vs.\ ablation $0.118$ (21\% median reduction, paired Wilcoxon
+$p=0.0003$, Cliff's $\delta=+0.33$). Answer error: pooled $p=0.41$; per
+domain, LCA wins beam (0.340 vs 0.404), cantilever (0.283 vs 0.346),
+projectile (0.110 vs 0.112, 5/6 seeds) and pendulum (0.021 vs 0.023), is
+neutral on spring (0.063 vs 0.058), and is significantly worse on RC
+(0.611 vs 0.509, $p=0.031$), whose normalized trajectory is the same curve
+for every time constant, so its answer requires trajectory-independent
+parameter arithmetic on a log scale spanning six decades --- reported
+honestly as a limitation of the shared-head generalist in this regime.
+Generalist-to-specialist answer-error ratios: beam 3.3$\times$,
+cantilever 2.8$\times$, projectile 1.2$\times$, pendulum 2.6$\times$,
+spring 1.1$\times$, RC 1.7$\times$. All per-seed values, medians,
+$p$-values, and deltas are in
+\texttt{paper/fig/multi\_law\_data.json}; model weights and logs are
+committed under \texttt{physx/models/lca\_\{real,dummy\}\_s*.pt}.
+
+\section*{SI 10. Causal steering, few-shot adaptation, and physics vs.\ data-only}
+
+\paragraph{Causal steering (law swap).} Beam and cantilever present identical
+quantity tokens and identical sampling ranges, so a held-out beam problem
+fed with the cantilever signature (and vice versa) differs from its native
+presentation only in the injected law vector. Per sample, the steering
+index $\mathrm{SI}=(d_{\mathrm{src}}-d_{\mathrm{tgt}})/(d_{\mathrm{src}}+d_{\mathrm{tgt}})$
+and the disruption $d_{\mathrm{src}}-d_{\mathrm{native}}$ use normalized
+trajectory errors against the exact solutions of both laws. Pooled over
+the $n{=}72$ per-condition samples (12 held-out problems $\times$ 6 seeds)
+of the beam$\to$cantilever direction:
+\begin{center}\small\begin{tabular}{@{}lcc@{}}
+\toprule
+ & LCA (real signature) & Constant-signature ablation \\
+\midrule
+Steering index (median) & $+0.090$ & $-0.132$ \\
+  paired Wilcoxon $p$ & \multicolumn{2}{c}{$<0.0001$} \\
+Signature-induced disruption (median) & $0.371$ & $0.000$ \\
+  paired Wilcoxon $p$ & \multicolumn{2}{c}{$<0.0001$} \\
+Per-seed median SI (6 seeds) & $-0.413$ & $-0.584$ \ ($p=0.031$) \\
+\bottomrule
+\end{tabular}\end{center}
+The ablation's disruption is exactly zero: with a constant signature the
+swap cannot change the computation, confirming the control is perfect. The
+LCA disruption is large and its swapped prediction lands on the target-law
+side of the decision boundary, but full re-targeting is not achieved (the
+swapped prediction's error against the target law remains $\sim$0.36), so
+steering is reported as partial. The reverse (cantilever$\to$beam)
+direction is excluded from the pooled test because beam deflections are the
+smaller family by $16\times$, which makes the normalized error scale trap
+the index; it is reported per seed in
+\texttt{paper/fig/law\_swap\_data.json}.
+
+\paragraph{Few-shot adaptation.} The cantilever is held out of a five-law
+pretraining (96 samples per law, 120 epochs); the pretrained generalist is
+fine-tuned on 24 cantilever samples (25\% of the 96-sample specialist
+budget) for 40 epochs; the from-scratch specialist receives the same 24
+samples and 40 epochs. Evaluation is on the same 12 held-out cantilever
+problems for all conditions. Held-out answer / curve error by seed:
+\begin{center}\small\begin{tabular}{@{}lccc@{}}
+\toprule
+Seed & LCA generalist & Dummy-signature ablation & Specialist \\
+\midrule
+0 & 0.197 / 0.137 & 0.239 / 0.131 & 0.279 / 0.273 \\
+1 & 0.287 / 0.134 & 0.437 / 0.145 & 0.580 / 0.284 \\
+2 & 0.182 / 0.172 & 0.153 / 0.129 & 0.691 / 0.282 \\
+Median & \textbf{0.197} / 0.137 & 0.239 / 0.131 & 0.580 / 0.282 \\
+\bottomrule
+\end{tabular}\end{center}
+
+\paragraph{Physics vs.\ data-only (heat2d).} Identical networks, 240 epochs,
+trajectory weight 3, three seeds; the only difference is
+$w_{\mathrm{phys}}$ ($0.05$ vs.\ $0$). Held-out field max error (per seed,
+then mean):
+\begin{center}\small\begin{tabular}{@{}lccc@{}}
+\toprule
+ & 64 samples (25\%) & 256 samples (100\%) \\
+\midrule
+Physics ($w{=}0.05$), field max err & 0.512 / 0.496 / 0.523 & 0.316 / 0.270 / 0.246 \\
+Data-only ($w{=}0$), field max err & 0.116 / 0.207 / 0.150 & 0.032 / 0.033 / 0.032 \\
+Physics, mean residual & 0.39 / 0.37 / 0.59 & 0.106 / 0.079 / 0.061 \\
+Data-only, mean residual & 2.60 / 4.46 / 4.04 & 0.815 / 0.458 / 0.347 \\
+\bottomrule
+\end{tabular}\end{center}
+The physics term reduces the governing-equation residual 4--8$\times$ but
+does not improve held-out field fidelity at this capacity; the canonical
+(2,3)-mode case is the easiest member of the validation distribution (5.9\%
+field error vs.\ $\sim$29\% mean).
+
+\section*{SI 8. Statistical analysis}
+
+Significance is assessed with the two-sided Wilcoxon signed-rank test on
+paired runs (same domain, same seed, kinds compared within the pair).
+Per-domain comparisons have $n=5$ pairs, for which the minimum achievable
+$p$ under the exhaustive sign-permutation null is $2/2^5 = 0.0625$; we
+therefore report both per-domain $p$-values and the pooled test over all
+five domains ($n=25$ pairs per comparison), which reaches
+$p<0.001$. Effect sizes are paired Cliff's $\delta$ (the probability of
+one kind beating the other minus the reverse). The physics term's effect on
+the trajectory residual is $p<0.001$ with $\delta=-0.92$ (large, in the
+physics-on direction) and a $\sim$19-fold median reduction; no comparison
+on the scalar answer reaches significance ($p\geq0.65$, $|\delta|\leq0.12$).
+All $p$-values, deltas, medians, and per-seed values are in
+\texttt{paper/fig/significance.json}.
+
+\end{document}

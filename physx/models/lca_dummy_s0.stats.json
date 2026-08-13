@@ -1,0 +1,1 @@
+{"law": "dummy", "domains": ["beam", "cantilever", "projectile", "pendulum", "spring", "rc"], "epochs": 250, "per_domain": 96, "seed": 0, "trained_seconds": 644.2}

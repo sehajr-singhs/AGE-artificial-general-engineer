@@ -1,0 +1,53 @@
+{
+ "beam": [
+  [
+   "fid_beam_s1",
+   NaN,
+   NaN
+  ],
+  [
+   "fid_beam_s0",
+   NaN,
+   NaN
+  ],
+  [
+   "fid_beam_s2",
+   NaN,
+   NaN
+  ]
+ ],
+ "cantilever": [
+  [
+   "fid_cantilever_s2",
+   NaN,
+   NaN
+  ],
+  [
+   "fid_cantilever_s1",
+   NaN,
+   NaN
+  ],
+  [
+   "fid_cantilever_s0",
+   NaN,
+   NaN
+  ]
+ ],
+ "burgers": [
+  [
+   "fid_burgers_s2",
+   NaN,
+   NaN
+  ],
+  [
+   "fid_burgers_s1",
+   NaN,
+   NaN
+  ],
+  [
+   "fid_burgers_s0",
+   NaN,
+   NaN
+  ]
+ ]
+}

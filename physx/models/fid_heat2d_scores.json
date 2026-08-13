@@ -1,0 +1,20 @@
+[
+ {
+  "tag": "fid_heat2d_s0",
+  "answer_err": 0.01399113459284706,
+  "field_max_err": 0.6249666251368601,
+  "field_mean_err": 0.1338665945704915
+ },
+ {
+  "tag": "fid_heat2d_s1",
+  "answer_err": 0.009767497475557056,
+  "field_max_err": 0.616131058466663,
+  "field_mean_err": 0.1327095309374627
+ },
+ {
+  "tag": "fid_heat2d_s2",
+  "answer_err": 0.013320957316706577,
+  "field_max_err": 0.4859189141130107,
+  "field_mean_err": 0.09651051796909299
+ }
+]

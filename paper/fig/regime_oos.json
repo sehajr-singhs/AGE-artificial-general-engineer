@@ -1,0 +1,110 @@
+{
+ "pre_registration": "models/ext/pre_registration.json",
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "rows": [
+  {
+   "domain": "beam",
+   "ambiguity": 1.0,
+   "curve_real_median": 0.09737002104520798,
+   "curve_dummy_median": 0.3460681140422821,
+   "benefit": 0.7186391432950352,
+   "benefit_x": 3.5541546600016236
+  },
+  {
+   "domain": "cantilever",
+   "ambiguity": 1.0,
+   "curve_real_median": 0.13818985223770142,
+   "curve_dummy_median": 0.20942704379558563,
+   "benefit": 0.3401527819273251,
+   "benefit_x": 1.5155023354055592
+  },
+  {
+   "domain": "projectile",
+   "ambiguity": 0.5,
+   "curve_real_median": 0.10973790287971497,
+   "curve_dummy_median": 0.1277478188276291,
+   "benefit": 0.14098022270121902,
+   "benefit_x": 1.164117551687269
+  },
+  {
+   "domain": "pendulum",
+   "ambiguity": 1.0,
+   "curve_real_median": 0.05368608236312866,
+   "curve_dummy_median": 0.1164126992225647,
+   "benefit": 0.5388296747549128,
+   "benefit_x": 2.1683962416023927
+  },
+  {
+   "domain": "spring",
+   "ambiguity": 1.0,
+   "curve_real_median": 0.11120361089706421,
+   "curve_dummy_median": 0.07905565947294235,
+   "benefit": -0.4066495888902786,
+   "benefit_x": 0.7109091047962494
+  },
+  {
+   "domain": "rc",
+   "ambiguity": 0.667,
+   "curve_real_median": 0.12555815279483795,
+   "curve_dummy_median": 0.11970620602369308,
+   "benefit": -0.04888590964103079,
+   "benefit_x": 0.9533925385099687
+  },
+  {
+   "domain": "damped",
+   "ambiguity": 0.75,
+   "curve_real_median": 0.1412958949804306,
+   "curve_dummy_median": 0.13947252929210663,
+   "benefit": -0.013073296208066632,
+   "benefit_x": 0.9870954093282291
+  },
+  {
+   "domain": "kepler",
+   "ambiguity": 0.667,
+   "curve_real_median": 0.15724219381809235,
+   "curve_dummy_median": 0.13861048221588135,
+   "benefit": -0.13441776772115044,
+   "benefit_x": 0.8815094654316173
+  },
+  {
+   "domain": "lc",
+   "ambiguity": 0.667,
+   "curve_real_median": 0.1004258394241333,
+   "curve_dummy_median": 0.0874091163277626,
+   "benefit": -0.1489172256079241,
+   "benefit_x": 0.8703847219897606
+  },
+  {
+   "domain": "drag",
+   "ambiguity": 0.5,
+   "curve_real_median": 0.06726811081171036,
+   "curve_dummy_median": 0.07561249285936356,
+   "benefit": 0.11035718744485046,
+   "benefit_x": 1.1240466239792268
+  }
+ ],
+ "spearman_all_10": {
+  "rho": 0.21212121212121213,
+  "p": 0.5602761243386244
+ },
+ "spearman_9_nondegenerate": {
+  "rho": 0.06666666666666667,
+  "p": 0.8800925925925925
+ },
+ "leave_one_out_predictive_rho": -0.5842373946721771,
+ "group_benefit_means_by_ambiguity": {
+  "1.0": 0.29774300277174864,
+  "0.75": -0.013073296208066632,
+  "0.667": -0.14166749666453726,
+  "0.5": 0.12566870507303474
+ },
+ "predictions_verified": {
+  "pendulum_benefit_positive": 0.5388296747549128,
+  "spring_benefit_positive": -0.4066495888902786,
+  "group_order_1.0_gt_0.75_gt_0.667_gt_0.5": false
+ }
+}

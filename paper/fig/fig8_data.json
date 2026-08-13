@@ -1,0 +1,15 @@
+{
+ "mean_rel_error": 0.010166850542441676,
+ "r2": 0.9986402376889959,
+ "n": 250,
+ "cases": {
+  "canonical": {
+   "answer_rel_error": 0.005296845814902217,
+   "curve_max_error": 0.11146560460983788
+  },
+  "shock": {
+   "answer_rel_error": 0.05052806073156277,
+   "curve_max_error": 0.5179596401550384
+  }
+ }
+}

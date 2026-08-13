@@ -1,0 +1,33 @@
+# node / runtime
+node_modules/
+.age/
+.demo/
+journal.jsonl
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# heavy artifacts (checkpoints, logs) — JSON results are committed
+*.pt
+*.log
+*.err
+*.aux
+*.out
+*.toc
+*.bbl
+*.blg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# component papers live in their own repos
+paper_fewshot/
+paper_field/
+paper_losschannel/
+paper_physbench/
+paper_physformer/
+paper_verify/

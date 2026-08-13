@@ -1,0 +1,25 @@
+{
+  "name": "age",
+  "version": "0.1.0",
+  "description": "AGE — an Artificial General Engineer. An autonomous agent that plans, edits, runs, and verifies software projects in a trial-and-error loop.",
+  "type": "module",
+  "bin": {
+    "age": "./age.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "demo": "node age.js --demo",
+    "bench:gate": "node bench/gate_bench.js"
+  },
+  "engines": {
+    "node": ">=18.18"
+  },
+  "keywords": [
+    "agent",
+    "ai",
+    "engineering",
+    "autonomous",
+    "cli"
+  ],
+  "license": "MIT"
+}

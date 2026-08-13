@@ -1,0 +1,718 @@
+{
+ "domains": [
+  "beam",
+  "cantilever",
+  "projectile",
+  "burgers",
+  "heat2d"
+ ],
+ "kinds": [
+  "phys",
+  "nophys",
+  "mlp"
+ ],
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "summary": {
+  "beam": {
+   "phys": {
+    "val_rel_mae": {
+     "mean": 0.14684000000000003,
+     "std": 0.007313207230757236,
+     "values": [
+      0.1407,
+      0.1536,
+      0.1479,
+      0.154,
+      0.138
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 3.4023200000000005,
+     "std": 0.5434899097499418,
+     "values": [
+      3.5572,
+      2.7239,
+      2.9883,
+      3.6633,
+      4.0789
+     ],
+     "n": 5
+    }
+   },
+   "nophys": {
+    "val_rel_mae": {
+     "mean": 0.19278,
+     "std": 0.07041432382690328,
+     "values": [
+      0.2327,
+      0.1359,
+      0.295,
+      0.1716,
+      0.1287
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 48.32604,
+     "std": 13.726771363944255,
+     "values": [
+      70.581,
+      40.7661,
+      51.7475,
+      35.7005,
+      42.8351
+     ],
+     "n": 5
+    }
+   },
+   "mlp": {
+    "val_rel_mae": {
+     "mean": 0.1562,
+     "std": 0.022822138374832455,
+     "values": [
+      0.1338,
+      0.1351,
+      0.1705,
+      0.1867,
+      0.1549
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 4.57618,
+     "std": 1.359754862833739,
+     "values": [
+      2.7901,
+      3.8382,
+      4.8569,
+      6.4279,
+      4.9678
+     ],
+     "n": 5
+    }
+   }
+  },
+  "cantilever": {
+   "phys": {
+    "val_rel_mae": {
+     "mean": 0.14798,
+     "std": 0.0232332089905807,
+     "values": [
+      0.132,
+      0.1562,
+      0.1828,
+      0.1458,
+      0.1231
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 38.79344,
+     "std": 11.644312352732555,
+     "values": [
+      40.1878,
+      34.8401,
+      23.5327,
+      55.8619,
+      39.5447
+     ],
+     "n": 5
+    }
+   },
+   "nophys": {
+    "val_rel_mae": {
+     "mean": 0.20426000000000002,
+     "std": 0.07492781859896898,
+     "values": [
+      0.2582,
+      0.1358,
+      0.3033,
+      0.1892,
+      0.1348
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 555.6677,
+     "std": 213.66004817694628,
+     "values": [
+      922.5823,
+      417.2795,
+      479.2414,
+      555.1711,
+      404.0642
+     ],
+     "n": 5
+    }
+   },
+   "mlp": {
+    "val_rel_mae": {
+     "mean": 0.15152000000000002,
+     "std": 0.015446585383184202,
+     "values": [
+      0.1483,
+      0.1308,
+      0.1682,
+      0.1449,
+      0.1654
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 62.635799999999996,
+     "std": 13.436460282194863,
+     "values": [
+      48.781,
+      74.8405,
+      47.6193,
+      68.0656,
+      73.8726
+     ],
+     "n": 5
+    }
+   }
+  },
+  "projectile": {
+   "phys": {
+    "val_rel_mae": {
+     "mean": 0.10758000000000001,
+     "std": 0.05620842463545834,
+     "values": [
+      0.1701,
+      0.0607,
+      0.1,
+      0.0468,
+      0.1603
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 0.10166000000000001,
+     "std": 0.06547490358908517,
+     "values": [
+      0.1871,
+      0.0381,
+      0.1375,
+      0.035,
+      0.1106
+     ],
+     "n": 5
+    }
+   },
+   "nophys": {
+    "val_rel_mae": {
+     "mean": 0.07587999999999999,
+     "std": 0.05620010676146443,
+     "values": [
+      0.1737,
+      0.0375,
+      0.0632,
+      0.0395,
+      0.0655
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 0.12305999999999999,
+     "std": 0.06593495279440185,
+     "values": [
+      0.1933,
+      0.0908,
+      0.1686,
+      0.0272,
+      0.1354
+     ],
+     "n": 5
+    }
+   },
+   "mlp": {
+    "val_rel_mae": {
+     "mean": 0.06546,
+     "std": 0.018690184589778665,
+     "values": [
+      0.0861,
+      0.0396,
+      0.0755,
+      0.0728,
+      0.0533
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 0.12122,
+     "std": 0.02822130400955987,
+     "values": [
+      0.1229,
+      0.1338,
+      0.1502,
+      0.0746,
+      0.1246
+     ],
+     "n": 5
+    }
+   }
+  },
+  "burgers": {
+   "phys": {
+    "val_rel_mae": {
+     "mean": 0.00898,
+     "std": 0.0023274449510138793,
+     "values": [
+      0.0088,
+      0.0082,
+      0.0067,
+      0.0083,
+      0.0129
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 0.008400000000000001,
+     "std": 0.0003937003937005905,
+     "values": [
+      0.0082,
+      0.0083,
+      0.0079,
+      0.0088,
+      0.0088
+     ],
+     "n": 5
+    }
+   },
+   "nophys": {
+    "val_rel_mae": {
+     "mean": 0.01046,
+     "std": 0.0027546324618721823,
+     "values": [
+      0.0094,
+      0.0105,
+      0.0066,
+      0.014,
+      0.0118
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 0.09356,
+     "std": 0.020502268167205306,
+     "values": [
+      0.0785,
+      0.108,
+      0.0724,
+      0.0877,
+      0.1212
+     ],
+     "n": 5
+    }
+   },
+   "mlp": {
+    "val_rel_mae": {
+     "mean": 0.01812,
+     "std": 0.006876554369740707,
+     "values": [
+      0.0207,
+      0.0134,
+      0.0151,
+      0.0124,
+      0.029
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 0.05526000000000001,
+     "std": 0.011343852960965245,
+     "values": [
+      0.073,
+      0.0585,
+      0.0442,
+      0.0533,
+      0.0473
+     ],
+     "n": 5
+    }
+   }
+  },
+  "heat2d": {
+   "phys": {
+    "val_rel_mae": {
+     "mean": 0.01462,
+     "std": 0.006232736156777375,
+     "values": [
+      0.0119,
+      0.0124,
+      0.0107,
+      0.0257,
+      0.0124
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 0.4535600000000001,
+     "std": 0.02313045611309902,
+     "values": [
+      0.4879,
+      0.4477,
+      0.4233,
+      0.4566,
+      0.4523
+     ],
+     "n": 5
+    }
+   },
+   "nophys": {
+    "val_rel_mae": {
+     "mean": 0.01358,
+     "std": 0.005273708372672877,
+     "values": [
+      0.009,
+      0.0112,
+      0.0218,
+      0.0158,
+      0.0101
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 10.37308,
+     "std": 5.905323628049524,
+     "values": [
+      19.9961,
+      6.6028,
+      5.0143,
+      8.7413,
+      11.5109
+     ],
+     "n": 5
+    }
+   },
+   "mlp": {
+    "val_rel_mae": {
+     "mean": 0.016360000000000003,
+     "std": 0.003933573438999201,
+     "values": [
+      0.0112,
+      0.0216,
+      0.0181,
+      0.0142,
+      0.0167
+     ],
+     "n": 5
+    },
+    "phys_resid": {
+     "mean": 1.3250600000000001,
+     "std": 0.2836025088041359,
+     "values": [
+      1.3565,
+      1.6562,
+      0.881,
+      1.4385,
+      1.2931
+     ],
+     "n": 5
+    }
+   }
+  }
+ },
+ "per_domain_tests": {
+  "beam": {
+   "complete": true,
+   "val_rel_mae": {
+    "phys_vs_nophys": {
+     "p": 0.4375,
+     "n": 5,
+     "cliff_delta": -0.2,
+     "median_ratio": 1.1602434077079107,
+     "a_better": true
+    },
+    "phys_vs_mlp": {
+     "p": 0.4375,
+     "n": 5,
+     "cliff_delta": -0.2,
+     "median_ratio": 1.0473292765382016,
+     "a_better": true
+    },
+    "nophys_vs_mlp": {
+     "p": 0.625,
+     "n": 5,
+     "cliff_delta": 0.2,
+     "median_ratio": 0.9026806526806527,
+     "a_better": false
+    }
+   },
+   "phys_resid": {
+    "phys_vs_nophys": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": -1.0,
+     "median_ratio": 12.041802541324637,
+     "a_better": true
+    },
+    "phys_vs_mlp": {
+     "p": 0.125,
+     "n": 5,
+     "cliff_delta": -0.6,
+     "median_ratio": 1.365371640616215,
+     "a_better": true
+    },
+    "nophys_vs_mlp": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": 1.0,
+     "median_ratio": 0.1133859848582121,
+     "a_better": false
+    }
+   }
+  },
+  "cantilever": {
+   "complete": true,
+   "val_rel_mae": {
+    "phys_vs_nophys": {
+     "p": 0.1875,
+     "n": 5,
+     "cliff_delta": -0.6,
+     "median_ratio": 1.297668038408779,
+     "a_better": true
+    },
+    "phys_vs_mlp": {
+     "p": 1.0,
+     "n": 5,
+     "cliff_delta": 0.2,
+     "median_ratio": 1.0171467764060356,
+     "a_better": true
+    },
+    "nophys_vs_mlp": {
+     "p": 0.1875,
+     "n": 5,
+     "cliff_delta": 0.6,
+     "median_ratio": 0.7838266384778012,
+     "a_better": false
+    }
+   },
+   "phys_resid": {
+    "phys_vs_nophys": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": -1.0,
+     "median_ratio": 12.118979281673651,
+     "a_better": true
+    },
+    "phys_vs_mlp": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": -1.0,
+     "median_ratio": 1.7212319223562198,
+     "a_better": true
+    },
+    "nophys_vs_mlp": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": 1.0,
+     "median_ratio": 0.14202779642994115,
+     "a_better": false
+    }
+   }
+  },
+  "projectile": {
+   "complete": true,
+   "val_rel_mae": {
+    "phys_vs_nophys": {
+     "p": 0.125,
+     "n": 5,
+     "cliff_delta": 0.6,
+     "median_ratio": 0.632,
+     "a_better": false
+    },
+    "phys_vs_mlp": {
+     "p": 0.3125,
+     "n": 5,
+     "cliff_delta": 0.6,
+     "median_ratio": 0.728,
+     "a_better": false
+    },
+    "nophys_vs_mlp": {
+     "p": 1.0,
+     "n": 5,
+     "cliff_delta": -0.2,
+     "median_ratio": 1.1518987341772151,
+     "a_better": true
+    }
+   },
+   "phys_resid": {
+    "phys_vs_nophys": {
+     "p": 0.1875,
+     "n": 5,
+     "cliff_delta": -0.6,
+     "median_ratio": 1.2242314647377937,
+     "a_better": true
+    },
+    "phys_vs_mlp": {
+     "p": 0.4375,
+     "n": 5,
+     "cliff_delta": -0.6,
+     "median_ratio": 1.1265822784810127,
+     "a_better": true
+    },
+    "nophys_vs_mlp": {
+     "p": 1.0,
+     "n": 5,
+     "cliff_delta": 0.2,
+     "median_ratio": 0.9202363367799115,
+     "a_better": false
+    }
+   }
+  },
+  "burgers": {
+   "complete": true,
+   "val_rel_mae": {
+    "phys_vs_nophys": {
+     "p": 0.4375,
+     "n": 5,
+     "cliff_delta": -0.2,
+     "median_ratio": 1.2650602409638554,
+     "a_better": true
+    },
+    "phys_vs_mlp": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": -1.0,
+     "median_ratio": 1.819277108433735,
+     "a_better": true
+    },
+    "nophys_vs_mlp": {
+     "p": 0.125,
+     "n": 5,
+     "cliff_delta": -0.6,
+     "median_ratio": 1.438095238095238,
+     "a_better": true
+    }
+   },
+   "phys_resid": {
+    "phys_vs_nophys": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": -1.0,
+     "median_ratio": 10.566265060240964,
+     "a_better": true
+    },
+    "phys_vs_mlp": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": -1.0,
+     "median_ratio": 6.421686746987952,
+     "a_better": true
+    },
+    "nophys_vs_mlp": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": 1.0,
+     "median_ratio": 0.6077537058152793,
+     "a_better": false
+    }
+   }
+  },
+  "heat2d": {
+   "complete": true,
+   "val_rel_mae": {
+    "phys_vs_nophys": {
+     "p": 0.625,
+     "n": 5,
+     "cliff_delta": 0.6,
+     "median_ratio": 0.9032258064516129,
+     "a_better": false
+    },
+    "phys_vs_mlp": {
+     "p": 0.8125,
+     "n": 5,
+     "cliff_delta": -0.2,
+     "median_ratio": 1.346774193548387,
+     "a_better": true
+    },
+    "nophys_vs_mlp": {
+     "p": 0.4375,
+     "n": 5,
+     "cliff_delta": -0.2,
+     "median_ratio": 1.4910714285714286,
+     "a_better": true
+    }
+   },
+   "phys_resid": {
+    "phys_vs_nophys": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": -1.0,
+     "median_ratio": 19.326332080477563,
+     "a_better": true
+    },
+    "phys_vs_mlp": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": -1.0,
+     "median_ratio": 2.9991156312182183,
+     "a_better": true
+    },
+    "nophys_vs_mlp": {
+     "p": 0.0625,
+     "n": 5,
+     "cliff_delta": 1.0,
+     "median_ratio": 0.15518286753686522,
+     "a_better": false
+    }
+   }
+  }
+ },
+ "pooled_tests": {
+  "val_rel_mae": {
+   "phys_vs_nophys": {
+    "p": 0.6473561134180696,
+    "n": 25,
+    "cliff_delta": 0.04,
+    "median_ratio": 0.632,
+    "a_better": false
+   },
+   "phys_vs_mlp": {
+    "p": 0.7914759516716003,
+    "n": 25,
+    "cliff_delta": -0.12,
+    "median_ratio": 0.728,
+    "a_better": false
+   },
+   "nophys_vs_mlp": {
+    "p": 0.8611559780689877,
+    "n": 25,
+    "cliff_delta": -0.04,
+    "median_ratio": 1.1518987341772151,
+    "a_better": true
+   }
+  },
+  "phys_resid": {
+   "phys_vs_nophys": {
+    "p": 1.7881393432617188e-07,
+    "n": 25,
+    "cliff_delta": -0.92,
+    "median_ratio": 19.326332080477563,
+    "a_better": true
+   },
+   "phys_vs_mlp": {
+    "p": 2.2113323211669922e-05,
+    "n": 25,
+    "cliff_delta": -0.84,
+    "median_ratio": 2.9991156312182183,
+    "a_better": true
+   },
+   "nophys_vs_mlp": {
+    "p": 5.245208740234375e-06,
+    "n": 25,
+    "cliff_delta": 0.84,
+    "median_ratio": 0.15518286753686522,
+    "a_better": false
+   }
+  }
+ }
+}

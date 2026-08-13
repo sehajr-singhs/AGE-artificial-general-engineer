@@ -1,0 +1,1 @@
+Get-CimInstance Win32_Process | Where-Object { $_.Name -match "python|torch" } | Select-Object ProcessId, Name, @{N='CPU_s';E={[math]::Round($_.KernelModeTime/1e7 + $_.UserModeTime/1e7,0)}}, @{N='Mem_MB';E={[math]::Round($_.WorkingSetSize/1MB,0)}}, CommandLine | Format-Table -AutoSize -Wrap
