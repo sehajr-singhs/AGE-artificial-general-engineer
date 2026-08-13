@@ -1,3 +1,5 @@
+import os
+
 """regime_analysis.py — when does equation conditioning matter?
 
 Quantifies, for each law in the shared-head multi-law experiment, how much the
@@ -73,8 +75,17 @@ def _rho(rx, ry):
     return float((rx * ry).sum() / denom) if denom > 0 else 0.0
 
 
+def _fig_path(name):
+    for cand in (os.path.join("paper", "fig", name),
+                 os.path.join("figs", name),
+                 name):
+        if os.path.exists(cand):
+            return cand
+    return os.path.join("paper", "fig", name)
+
+
 def main(out="paper/fig/regime_analysis.json"):
-    data = json.load(open("paper/fig/multi_law_data.json"))
+    data = json.load(open(_fig_path("multi_law_data.json")))
     pd = data["per_domain"]
 
     rows = []

@@ -14,6 +14,39 @@ from .physformer import build
 from .residuals import residual
 
 
+def _repo_root():
+    """Repo root for either layout: AGE working tree or standalone paper repo.
+
+    Here is .../physx (AGE tree) or .../src/physx (standalone repo).
+    """
+    here = os.path.dirname(os.path.abspath(__file__))
+    if os.path.basename(os.path.dirname(here)) == "src":
+        return os.path.dirname(os.path.dirname(here))      # standalone repo
+    return os.path.dirname(here)                           # AGE working tree
+
+
+def _data_path(rel):
+    """Resolve a committed data file across layouts.
+
+    AGE tree: paper/fig/x.json, physx/models/ext/x.json, bench/x.json ...
+    standalone repo: figs/x.json, results/x.json ...
+    """
+    root = _repo_root()
+    base = os.path.basename(rel)
+    candidates = [os.path.join(root, rel)]
+    if rel.startswith("physx" + os.sep):
+        # standalone repos keep model artifacts under results/
+        stripped = rel.split(os.sep, 1)[1]          # models/ext/x.json
+        candidates.append(os.path.join(root, "results", stripped))
+        candidates.append(os.path.join(root, "results", base))
+    candidates += [os.path.join(root, "figs", base),
+                   os.path.join(root, "paper", "fig", base)]
+    for cand in candidates:
+        if os.path.exists(cand):
+            return cand
+    return candidates[0]
+
+
 class TestSimulators(unittest.TestCase):
     def test_projectile_closed_matches_euler(self):
         p = {"v0": 20.0, "angle": 45.0}
@@ -505,10 +538,12 @@ class TestComponentAnalyses(unittest.TestCase):
     def test_transfer_ablations_json_is_committed_and_measured(self):
         # every ablation row must have per-seed measured values (3 seeds),
         # not estimates -- the few-shot paper's Table 2 depends on this
+        # (data lives in the AGE working tree; skipped in standalone repos)
         import json
-        p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                         "paper_fewshot", "fig", "transfer_ablations.json")
-        self.assertTrue(os.path.exists(p))
+        p = os.path.join(_repo_root(), "paper_fewshot", "fig",
+                         "transfer_ablations.json")
+        if not os.path.exists(p):
+            self.skipTest("transfer-ablations data not in this repo")
         d = json.load(open(p))
         for abl in ("novocab", "nophys", "frozen"):
             self.assertEqual(set(d["ablations"][abl].keys()), {"0", "1", "2"})
@@ -519,9 +554,11 @@ class TestComponentAnalyses(unittest.TestCase):
                            5 * d["median"]["frozen"]["ans_rel_mae"])
 
     def test_gate_benchmark_results_structure(self):
+        # (data lives in the AGE working tree; skipped in standalone repos)
         import json
-        p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                         "bench", "gate_bench_results.json")
+        p = os.path.join(_repo_root(), "bench", "gate_bench_results.json")
+        if not os.path.exists(p):
+            self.skipTest("gate-benchmark data not in this repo")
         d = json.load(open(p))
         ms = d["missions"]
         self.assertEqual(len(ms), 7)
@@ -552,7 +589,8 @@ class TestRegimeTheory(unittest.TestCase):
         # the vocabulary alone (models/ext/pre_registration.json)
         from . import regime_oos as ro
         import json as _json
-        path = "physx/models/ext/pre_registration.json"
+        path = _data_path(os.path.join("physx", "models", "ext",
+                                       "pre_registration.json"))
         pre = _json.load(open(path))
         for d, amb in pre["ambiguity_from_vocabulary_only"].items():
             self.assertAlmostEqual(ro.ambiguity_10(d), amb, places=3, msg=d)
@@ -567,7 +605,7 @@ class TestRegimeTheory(unittest.TestCase):
         # have 0.5 -- but the ranks must not cross)
         import json
         from . import regime_analysis as reg
-        data = json.load(open("paper/fig/multi_law_data.json"))
+        data = json.load(open(_data_path("multi_law_data.json")))
         pd = data["per_domain"]
         five = [d for d in reg.DOMAINS if d != "rc"]
         benefits = [1.0 - pd[d]["curve_err"]["median_real"] /
@@ -616,7 +654,7 @@ class TestRegimeTheory(unittest.TestCase):
         # single-model comparison was not completed and must be None (never
         # report unmeasured numbers)
         import json
-        d = json.load(open("paper/fig/deeponet_baselines.json"))
+        d = json.load(open(_data_path("deeponet_baselines.json")))
         self.assertEqual(len(d["per_law"]), 10)
         import numpy as np
         med = np.median([v["curve_err"] for v in d["per_law"].values()])

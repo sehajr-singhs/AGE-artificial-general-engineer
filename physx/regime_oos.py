@@ -105,6 +105,11 @@ def main(argv=None):
 
     here = os.path.dirname(os.path.abspath(__file__))
     base = os.path.join(here, "models", "ext")
+    if not os.path.isdir(base):
+        # standalone paper repo layout: data lives in results/ at repo root
+        alt = os.path.join(os.path.dirname(os.path.dirname(here)), "results")
+        if os.path.isdir(alt):
+            base = alt
     pre = json.load(open(os.path.join(base, "pre_registration.json")))
     amb = {d: pre["ambiguity_from_vocabulary_only"][d] for d in DOMAINS}
 
