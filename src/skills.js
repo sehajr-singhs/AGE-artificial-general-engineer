@@ -274,9 +274,12 @@ export function verify(dir, args) {
 // physics-adjusted transformer. Spawned without a shell so JSON args never
 // hit shell quoting (cross-platform safe).
 export function physx(dir, { domain, params = {} } = {}) {
-  const solvePy = path.join(PROJECT_ROOT, 'physx', 'solve.py');
-  if (!fs.existsSync(solvePy)) {
-    return { ok: false, status: 'fail', output: `physx solver not found (expected ${solvePy})` };
+  // standalone repos keep the physics core under src/physx
+  const solvePy = ['physx', 'src/physx']
+    .map((p) => path.join(PROJECT_ROOT, p, 'solve.py'))
+    .find((p) => fs.existsSync(p));
+  if (!solvePy) {
+    return { ok: false, status: 'fail', output: `physx solver not found (expected ${path.join(PROJECT_ROOT, 'physx', 'solve.py')})` };
   }
   const blob = JSON.stringify({ domain, params });
   const res = spawnSync(findPython(), [solvePy, '--json', blob], {

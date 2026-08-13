@@ -24,10 +24,5 @@ venv/
 .DS_Store
 Thumbs.db
 
-# component papers live in their own repos
-paper_fewshot/
-paper_field/
-paper_losschannel/
-paper_physbench/
-paper_physformer/
-paper_verify/
+# (component papers live in their own repos; excluded via .git/info/exclude
+#  so they stay out of this repo without hiding them from tooling)

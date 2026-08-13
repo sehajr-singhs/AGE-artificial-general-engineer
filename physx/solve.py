@@ -18,8 +18,14 @@ import sys
 import numpy as np
 
 if __package__ in (None, ""):
-    # support running as a plain script: python physx/solve.py
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    # support running as a plain script: python physx/solve.py, and from
+    # standalone repos where the package lives under src/physx
+    _here = os.path.dirname(os.path.abspath(__file__))
+    for _cand in (os.path.dirname(_here),                 # AGE tree: <root>/physx
+                  os.path.dirname(os.path.dirname(_here))):  # repo root
+        if os.path.isdir(os.path.join(_cand, "physx")):
+            sys.path.insert(0, _cand)
+            break
     from physx import sim, dataset
 else:
     from . import sim, dataset
