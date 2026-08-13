@@ -1,0 +1,45 @@
+% IEEE conference paper: PhysBench: A Verifiable Multi-Domain Benchmark for Physics-Informed Machine Learning
+% Compile: pdflatex ieee_paper.tex   (figures in ../figs)
+\documentclass[conference,10pt]{IEEEtran}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{url}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\title{PhysBench: A Verifiable Multi-Domain Benchmark for Physics-Informed Machine Learning}
+
+\author{\IEEEauthorblockN{Sehaj Randhir Singh}
+\IEEEauthorblockA{\textit{Department of Electrical and Computer Engineering,}\\
+\textit{NYU Tandon School of Engineering (independent researcher)}\\
+Brooklyn, NY, USA\\
+sehajrsinghs@gmail.com}}
+
+\maketitle
+
+\begin{abstract}
+Benchmarks for physics ML mostly share a structural weakness: the ground truth and the model are validated against the same simulation code, so agreement can reflect shared error rather than physical correctness. PhysBench is a benchmark of twelve physics domains built on the independent-verifier principle: every target is produced by a closed-form or high-resolution numerical solution implemented separately from the training signal, and every prediction is scored against an independent governing-equation residual, not the generating code. We provide a committed 75-run baseline matrix (5 domains $\times$ 3 architectures $\times$ 5 seeds) and an operator-network comparison on the ten trajectory domains. Held-out error spans two orders of magnitude across domains, and the best architecture differs by domain. PhysBench is small by design (a few hundred samples per domain, CPU-minutes): it is built to expose mechanisms, not to win leaderboards.
+\end{abstract}
+
+\begin{IEEEkeywords}
+benchmark; physics-informed machine learning; verification; neural operators
+\end{IEEEkeywords}
+
+\section{Introduction}
+A benchmark claim -- 'this model gets the physics right' -- is only meaningful if 'right' is defined by something the benchmark author did not also write. PhysBench enforces two independence conditions: targets are generated separately from the training signal, and predictions are scored against the governing equation by verifiers written from a different formulation (finite differences, Euler/RK4, energy balance).
+
+\section{Domains}
+Twelve domains: algebraic closed-form trajectories, energy conservation, harmonic and relaxation ODEs (spring, LC, damped oscillator), central-force motion (Kepler), fourth-order bending (beam, cantilever), linear drag, a conservation-law PDE (Burgers), and an elliptic field problem (heat plate). Each provides a parameterized instance family, exact answers, shape-normalized targets, and a deterministic, seeded data generator.
+
+\section{Results}
+The 75-run baseline matrix is fully committed (physx/models/matrix/). Held-out error spans two orders of magnitude; the best architecture differs by domain. On the ten trajectory domains, ten dedicated DeepONets reach median held-out error 0.037 vs. 0.110 for a single law-conditioned generalist, which beats the specialists outright on spring (0.111 vs. 0.122) and LC (0.100 vs. 0.192). The benchmark's point is not that one architecture wins -- it is that the right question is per-domain and per-capacity, and independent verifiers let both statements be made precisely.
+
+\begin{thebibliography}{1}
+\bibitem{lu2021deeponet} L.~Lu, P.~Jin, G.~Pang, Z.~Zhang, and G.~E. Karniadakis, ``Learning nonlinear operators via DeepONet based on the universal approximation theorem of operators,'' Nature Machine Intelligence, vol.~3, pp.~218--229, 2021.
+\end{thebibliography}
+
+\end{document}

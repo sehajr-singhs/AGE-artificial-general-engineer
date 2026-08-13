@@ -1,0 +1,65 @@
+% IEEE conference paper: Few-Shot Law Acquisition: What Transfers Across Physics Laws, Measured
+% Compile: pdflatex ieee_paper.tex   (figures in ../figs)
+\documentclass[conference,10pt]{IEEEtran}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{url}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\title{Few-Shot Law Acquisition: What Transfers Across Physics Laws, Measured}
+
+\author{\IEEEauthorblockN{Sehaj Randhir Singh}
+\IEEEauthorblockA{\textit{Department of Electrical and Computer Engineering,}\\
+\textit{NYU Tandon School of Engineering (independent researcher)}\\
+Brooklyn, NY, USA\\
+sehajrsinghs@gmail.com}}
+
+\maketitle
+
+\begin{abstract}
+Few-shot transfer in physics ML usually means: same equation, more parameters. We transfer across laws: a generalist that has seen five laws adapts to a held-out sixth with a quarter of the data at 2.9$\times$ lower error than a from-scratch specialist. Then we decompose why, with ablations that overturned the intended narrative: the quantity vocabulary is the dominant carrier (removing it is 10$\times$ worse), and the physics residual -- helpful in general -- constrains trajectory specialization at tiny budgets (removing it improves trajectory error 7$\times$ while answers stay flat). Both findings are per-seed, committed, and re-runnable.
+\end{abstract}
+
+\begin{IEEEkeywords}
+few-shot learning; transfer learning; physics-informed machine learning; transformers
+\end{IEEEkeywords}
+
+\section{Introduction}
+What does a model that has learned several physics laws know that a from-scratch learner does not? This paper measures the transfer and then decomposes its mechanism with ablations, reporting the decomposition as measured -- including the direction that surprised the authors.
+
+\section{Protocol}
+Five training laws, one held-out law, budgets from 24 to 96 samples. Conditions: generalist with real equation signature, dummy-signature control, from-scratch specialist. Ablations: no vocabulary stream, no physics residual, frozen body.
+
+\section{Results}
+\begin{table}[!t]
+\caption{Few-shot law acquisition (25\% budget) and the ablation
+decomposition. The vocabulary is the dominant carrier; the physics
+residual constrains trajectory specialization at tiny budgets.}
+\label{tab:fewshot}
+\centering
+\begin{tabular}{lc}
+\toprule
+Condition & median rel-MAE \\
+\midrule
+Generalist (real signature) & 0.1971046675358058 \\
+Dummy control & 0.23896641936098253 \\
+From-scratch specialist & 0.5803608226154111 \\
+Ablation: no vocabulary & 2.021912348943419 \\
+Ablation: no physics & 0.21398293623972417 \\
+Ablation: frozen body & 0.19808596781154184 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At the 25\% budget the generalist is 2.9$\times$ better than the specialist. Removing the vocabulary is catastrophic (10$\times$); removing the physics residual frees trajectory specialization 7$\times$ while answers stay flat -- the residual constrains curves at tiny budgets before data can specialize them.
+
+\begin{thebibliography}{1}
+\bibitem{brown2020language} T.~Brown et al., ``Language models are few-shot learners,'' NeurIPS 2020.
+\end{thebibliography}
+
+\end{document}

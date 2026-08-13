@@ -1,0 +1,58 @@
+% IEEE conference paper: Field Consistency: The Cost of Enforcing PDE Residuals on 2D Fields
+% Compile: pdflatex ieee_paper.tex   (figures in ../figs)
+\documentclass[conference,10pt]{IEEEtran}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{url}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\title{Field Consistency: The Cost of Enforcing PDE Residuals on 2D Fields}
+
+\author{\IEEEauthorblockN{Sehaj Randhir Singh}
+\IEEEauthorblockA{\textit{Department of Electrical and Computer Engineering,}\\
+\textit{NYU Tandon School of Engineering (independent researcher)}\\
+Brooklyn, NY, USA\\
+sehajrsinghs@gmail.com}}
+
+\maketitle
+
+\begin{abstract}
+The tensor pipeline extends to 2D fields: the same transformer with a field-shaped head learns the full $u(x,y)$ surface of a heat plate. The showcase number -- 5.9\% peak field error -- is real and is the easiest member of the validation distribution, whose honest mean is ~29\%; this paper reports the distribution, not just the showcase. Enforcing the Poisson residual cuts it 6--8$\times$ while field fidelity degrades: consistency is not accuracy at the field level. Against a per-instance PINN (DeepXDE, ~19 minutes per problem), the specialist wins on its own instance at 0.03--0.06\% error but with a higher governing-equation residual; the generalist answers any instance in one forward pass. Both statements are true; the claim is the tradeoff.
+\end{abstract}
+
+\begin{IEEEkeywords}
+physics-informed neural networks; PDEs; PINN; fields; verification
+\end{IEEEkeywords}
+
+\section{Introduction}
+At the field level the pattern from trajectory domains repeats and sharpens: enforcing the governing equation makes predictions consistent, not correct. The two must be measured separately, and here both are -- including the honest distribution number that a showcase-only evaluation hides.
+
+\section{Protocol}
+Heat-plate domain ($u_{xx}+u_{yy}=f$), field-shaped head, 240 epochs, canonical showcase plus the full validation distribution; Burgers' equation for the per-instance DeepXDE comparison (per-instance PINN at 0.03--0.06\% full-field error vs. one-pass generalist at 33--51\% with lower governing-equation residual).
+
+\section{Results}
+\begin{table}[!t]
+\caption{Field-level generalist vs.\ per-instance PINN (DeepXDE). A
+specialist wins on its own problem; the generalist is a consistent
+solver of all instances.}
+\label{tab:field}
+\centering
+\begin{tabular}{lcc}
+\toprule
+Instance & DeepXDE & generalist \\
+\midrule
+instances & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{thebibliography}{1}
+\bibitem{lu2021deepxde} L.~Lu, X.~Meng, Z.~Mao, and G.~E. Karniadakis, ``DeepXDE: a deep learning library for solving differential equations,'' SIAM Review, vol.~63, pp.~208--228, 2021.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,66 @@
+% IEEE conference paper: The Verification Gate: The Missing Control in Autonomous Agent Evaluation
+% Compile: pdflatex ieee_paper.tex   (figures in ../figs)
+\documentclass[conference,10pt]{IEEEtran}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{url}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\title{The Verification Gate: The Missing Control in Autonomous Agent Evaluation}
+
+\author{\IEEEauthorblockN{Sehaj Randhir Singh}
+\IEEEauthorblockA{\textit{Department of Electrical and Computer Engineering,}\\
+\textit{NYU Tandon School of Engineering (independent researcher)}\\
+Brooklyn, NY, USA\\
+sehajrsinghs@gmail.com}}
+
+\maketitle
+
+\begin{abstract}
+Autonomous agents are usually evaluated by what they report, and agents that do not verify their work report success that never happened. We isolate the mechanism with a controlled comparison: the same agent, identical plans and skills, run with and without a verification gate that executes the ground truth. With the gate, 0 of 7 missions end in false success and 100\% of injected faults are caught; without it, the same agent reports false success on 29\% of missions and misses every fault. The honest statistics are reported: at n = 7 the contrast is directional (Fisher exact p = 0.23; Clopper-Pearson one-sided 95\% upper bound 34.8\% on 0/7), and a power analysis gives ~28 missions per condition for 80\% power. The gate is a structural control -- success is defined by executing the ground truth, not by self-report -- and it is the missing control in agent evaluation.
+\end{abstract}
+
+\begin{IEEEkeywords}
+autonomous agents; verification; evaluation; AI safety
+\end{IEEEkeywords}
+
+\section{Introduction}
+Capability is not honesty. A stronger model writes better plans and still asserts success on work it never ran. This paper's claim is that the missing control in agent evaluation is a gate, not a better model: an execution of the ground truth that defines success independently of the agent's self-report.
+
+\section{Benchmark}
+Seven engineering missions (scaffold, injected-fault repair, beam design, cantilever design, Burgers design, clobber-guard, TODO scan), two carrying injected faults. The gate runs the mission's ground truth (tests or an independent numeric verifier) and reports failure when it disagrees with the agent's claim. The agent (AGE) is unchanged between conditions.
+
+\section{Results}
+\begin{table}[!t]
+\caption{The 7-mission verification-gate benchmark. ``caught'' means the
+gate reported failure on a mission whose ground truth was false; without
+the gate the same agent reports success on 2 of 7 missions (29\%).}
+\label{tab:gate}
+\centering
+\begin{tabular}{lcc}
+\toprule
+Mission & With gate & Without gate \\
+\midrule
+scaffold-ok & ok & ok \\
+injected-fault & caught & success \\
+beam-design & ok & ok \\
+cantilever-design & ok & ok \\
+burgers-design & ok & ok \\
+clobber-guard & caught & success \\
+todo-scan & ok & ok \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+0\% vs. 29\% false success; 100\% of faults caught vs. none. At n = 7 the contrast is directional, not significant (Fisher exact p = 0.23), and the paper states the sample size that would settle it rather than spinning the direction.
+
+\begin{thebibliography}{1}
+\bibitem{singh2026age} S.~R. Singh, ``AGE: an autonomous engineering agent with physics-informed transformers and verified trial-and-error learning,'' 2026, arXiv:2603.xxxxx.
+\end{thebibliography}
+
+\end{document}

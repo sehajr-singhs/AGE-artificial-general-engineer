@@ -1,0 +1,64 @@
+% IEEE conference paper: The Physics Loss Channel: Consistency Is Not Accuracy
+% Compile: pdflatex ieee_paper.tex   (figures in ../figs)
+\documentclass[conference,10pt]{IEEEtran}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{url}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\title{The Physics Loss Channel: Consistency Is Not Accuracy}
+
+\author{\IEEEauthorblockN{Sehaj Randhir Singh}
+\IEEEauthorblockA{\textit{Department of Electrical and Computer Engineering,}\\
+\textit{NYU Tandon School of Engineering (independent researcher)}\\
+Brooklyn, NY, USA\\
+sehajrsinghs@gmail.com}}
+
+\maketitle
+
+\begin{abstract}
+Adding a physics residual to the loss is the standard way to make a network physical -- and the standard way to stop measuring what it does. We isolate the loss channel on a controlled matrix: identical architectures, data, and training, with the physics term on or off. The physics term cuts the governing-equation residual 19$\times$ (p < 1e-7, Cliff's $\delta = -0.92$) -- it genuinely enforces consistency -- while pooled held-out accuracy stays flat (p = 0.65) and one domain (projectile) gets worse. Consistency is not accuracy; the loss channel is real, separable, and insufficient. The full 75-run matrix (5 domains $\times$ 3 architectures $\times$ 5 seeds) is committed and re-runnable.
+\end{abstract}
+
+\begin{IEEEkeywords}
+physics-informed neural networks; loss design; PINN; verification
+\end{IEEEkeywords}
+
+\section{Introduction}
+PINN-style losses are ubiquitous and rarely controlled. This study separates two effects that a single number usually conflates: does the physics term make predictions more consistent with the governing equation, and does it make them more accurate?
+
+\section{Protocol}
+Three model kinds (physics-in-the-loss transformer, no-physics transformer, MLP head) $\times$ five domains $\times$ five seeds, pooled paired statistics (Wilcoxon signed-rank with exact permutation, Cliff's delta). Data, splits, and training are identical across kinds.
+
+\section{Results}
+\begin{table}[!t]
+\caption{Loss-channel matrix: mean held-out rel-MAE (5 seeds) with physics
+in the loss (phys), without (nophys), and with an MLP head; per-domain
+paired $p$ and effect size $\delta$.}
+\label{tab:loss}
+\centering
+\begin{tabular}{lccccc}
+\toprule
+Domain & phys & nophys & MLP & $p$ & $\delta$ \\
+\midrule
+beam & 0.147 & 0.193 & 0.156 & 0.438 & -0.20 \\
+cantilever & 0.148 & 0.204 & 0.152 & 0.188 & -0.60 \\
+projectile & 0.108 & 0.076 & 0.065 & 0.125 & +0.60 \\
+burgers & 0.009 & 0.010 & 0.018 & 0.438 & -0.20 \\
+heat2d & 0.015 & 0.014 & 0.016 & 0.625 & +0.60 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pooled residual reduction is 19$\times$ (p < 1e-7); pooled accuracy is null (p = 0.65) and the direction varies by domain. The companion physics-transformers paper shows the channel that does move accuracy: physics as input tokens, causally active at inference.
+
+\begin{thebibliography}{1}
+\bibitem{raissi2019pinn} M.~Raissi, P.~Perdikaris, and G.~E. Karniadakis, ``Physics-informed neural networks,'' Journal of Computational Physics, vol.~378, pp.~686--707, 2019.
+\end{thebibliography}
+
+\end{document}
